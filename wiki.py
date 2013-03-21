@@ -1,22 +1,20 @@
 import requests
-import json
 
 version = '0.1'
-ua = 'wikipy/' + version + '(https://github.com/tomshen/wikipy)'
-headers = {'user-agent': ua}
+user_agent = 'wikipy/' + version + '(https://github.com/tomshen/wikipy)'
+headers = {'User-Agent': user_agent}
 
 class Wiki():
     def __init__(self, endpoint='http://en.wikipedia.org/w/api.php'):
-        if endpoint:
-            self.endpoint = endpoint
+        self.endpoint = endpoint
 
     class Page():
         def __init__(self, endpoint, title):
             payload = {'format': 'json',
-                   'action': 'query',
-                   'titles': title,
-                   'prop': 'revisions',
-                   'rvprop': 'content'}
+                       'action': 'query',
+                       'titles': title,
+                       'prop': 'revisions',
+                       'rvprop': 'content'}
             r = requests.get(endpoint, params=payload, headers=headers)
             self.json = r.json()
 
@@ -26,13 +24,21 @@ class Wiki():
 
         def getArticle(self):
             content = self.getContent()
-            return content[content.index("'''"):content.index('== See also ==')].strip()
+            i = content[:content.index("'''")].rindex('}}')+ len('}}')
+            content = content[i:]
+            article_endings = ['== See also ==', '==See also==',
+                               '== References ==', '==References==',
+                               '== Further reading ==', '==Further reading==',
+                               '== External links ==', '==External links==']
+            for ending in article_endings:
+                if ending in content:
+                    return content[:content.index(ending)].strip()
 
         def getReferences(self):
             content = self.getContent()
             if '== References ==' in content:
                 content = content[content.index('== References =='):]
-                return content[:content.index('== ', len('== References =='))].strip()
+                return content[:content.index('==', len('== References =='))].strip()
             else:
                 return 'No references found.'
 
