@@ -9,12 +9,19 @@ class Wiki():
         self.endpoint = endpoint
 
     class Page():
-        def __init__(self, endpoint, title):
-            payload = {'format': 'json',
-                       'action': 'query',
-                       'titles': title,
-                       'prop': 'revisions',
-                       'rvprop': 'content'}
+        def __init__(self, endpoint, title='', random=False):
+            if random:
+                payload = {'format': 'json',
+                           'action': 'query',
+                           'generator': 'random',
+                           'prop': 'revisions',
+                           'rvprop': 'content'}
+            else:
+                payload = {'format': 'json',
+                           'action': 'query',
+                           'titles': title,
+                           'prop': 'revisions',
+                           'rvprop': 'content'}
             r = requests.get(endpoint, params=payload, headers=headers)
             self.json = r.json()
 
@@ -24,8 +31,11 @@ class Wiki():
 
         def getArticle(self):
             content = self.getContent()
-            i = content[:content.index("'''")].rindex('}}')+ len('}}')
-            content = content[i:]
+            if "'''" in content:
+                content_head = content[:content.index("'''")]
+                if '}}' in content_head:
+                    article_start = content_head.rindex('}}')+ len('}}')
+                    content = content[article_start:]
             article_endings = ['== See also ==', '==See also==',
                                '== References ==', '==References==',
                                '== Further reading ==', '==Further reading==',
@@ -33,6 +43,7 @@ class Wiki():
             for ending in article_endings:
                 if ending in content:
                     return content[:content.index(ending)].strip()
+            return content.strip()
 
         def getReferences(self):
             content = self.getContent()
@@ -44,3 +55,6 @@ class Wiki():
 
     def getPage(self, title):
         return self.Page(self.endpoint, title)
+
+    def getRandomPage(self):
+        return self.Page(self.endpoint, random=True)

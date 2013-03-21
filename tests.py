@@ -7,7 +7,7 @@ def printJSON(ugly_json):
 
 def main():
     w = wiki.Wiki() # defaults to English Wikipedia
-    page = w.getPage('Wikipedia')
+    page = w.getPage('Python (programming language)')
     with open('temp.txt', 'w') as f:
         f.write(page.getArticle().decode('ascii', 'ignore'))
         f.close()
