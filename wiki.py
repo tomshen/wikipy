@@ -27,7 +27,7 @@ class Wiki():
 
         def getContent(self):
             for page in self.json['query']['pages'].values():
-                return page['revisions'][0]['*'].encode('utf-8')
+                return page['revisions'][0]['*']
 
         def getArticle(self):
             content = self.getContent()
