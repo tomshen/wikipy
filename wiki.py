@@ -39,7 +39,7 @@ class Page:
         self.json_parsed = getJSON(endpoint, parsed_payload)
 
         def cleanHTML(html):
-            html = html.replace('//', 'http://')
+            html = html.replace('"//', '"http://')
             html = html.replace('href="/', 'href="' + domain + '/')
             html = html.replace('src="/', 'src="' + domain + '/')
             return html.strip()
