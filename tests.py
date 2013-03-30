@@ -12,5 +12,5 @@ def writeToFile(filename, content):
 def main():
     writeToFile('temp.html', Wiki().getPage('Monty Python').getHTMLContent())
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
